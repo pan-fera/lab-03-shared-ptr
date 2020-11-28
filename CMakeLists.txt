@@ -33,6 +33,7 @@ add_library(template INTERFACE)
 add_executable(demo
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
 )
+#target_link_libraries(demo template) #если убрать, то прописать путь к хэдеру.
 
 add_executable(tests
   # TODO: enum your files and delete this comment
