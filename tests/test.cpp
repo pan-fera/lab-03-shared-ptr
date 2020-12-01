@@ -194,7 +194,7 @@ TEST(Struct, Operator) {
   EXPECT_THROW(str1<<ptr1->_x, std::runtime_error);
 }
 
-TEST(StructMethods, AppealOperator) {
+/*TEST(StructMethods, AppealOperator) {
   Tests _test1(4, 3);
   Tests _test2(5, -4);
   SharedPtr<Tests> ptr1(&_test1);
@@ -215,7 +215,7 @@ TEST(StructMethods, AppealOperator) {
   EXPECT_EQ(str1.str(), ref1);
   EXPECT_EQ(str2.str(), ref2);
   EXPECT_EQ(str3.str(), ref1);
-}
+}*/
 
 TEST(StructMethods, Reset) {
   Tests _test1(4, 3);
