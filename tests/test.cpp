@@ -162,6 +162,6 @@ TEST(Struct, Test1) {
   Tests* p = &_test1;
   std::cout<<p->_x<<" "<<p->_y<<std::endl;
   SharedPtr<Tests> ptr2(p);
+  std::cout<<"dwede"<<std::endl;
   //EXPECT_TRUE(ptr1);
-
 }
