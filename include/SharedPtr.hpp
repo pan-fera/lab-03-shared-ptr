@@ -79,11 +79,11 @@ class SharedPtr {
     return m_ptr;
   }
   void reset(){
-    if (m_count != nullptr){
+    if (m_count != nullptr && m_ptr != nullptr){
       --*m_count;
       if (*m_count == 0){
         //m_ptr->~T();
-       free(m_ptr);
+        delete m_ptr;
         delete m_count;
       }
     }
