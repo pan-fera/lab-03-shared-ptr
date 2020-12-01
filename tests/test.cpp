@@ -111,8 +111,6 @@ TEST(Operator, MoveOperator) {
   EXPECT_EQ(*ptr3, *pointer);
   EXPECT_TRUE(ptr1.get()== nullptr);
   EXPECT_TRUE(ptr3.get() == pointer);
-
-  EXPECT_THROW(ptr3 = std::move(ptr3), std::runtime_error);
 }
 
 TEST(Methods, Reset) {
