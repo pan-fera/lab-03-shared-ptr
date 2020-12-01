@@ -144,7 +144,7 @@ TEST(Methods, Swap) {
   EXPECT_EQ(ptr2.use_count(), 1);
 }
 
-/*struct Tests {
+struct Tests {
  public:
   int _x, _y;
   Tests(){
@@ -159,8 +159,7 @@ TEST(Methods, Swap) {
 };
 
 TEST(Struct, Constructor) {
-  Tests _test1(4, 3);
-  SharedPtr<Tests> ptr1(&_test1);
+  SharedPtr<Tests> ptr1(new Tests (4, 3));
   SharedPtr<Tests> ptr2(ptr1);
   EXPECT_TRUE(ptr1);
   EXPECT_TRUE(ptr2);
@@ -177,8 +176,7 @@ TEST(Struct, Constructor) {
 }
 
 TEST(Struct, Operator) {
-  Tests _test1(4, 3);
-  SharedPtr<Tests> ptr1(&_test1);
+  SharedPtr<Tests> ptr1(new Tests (4, 3));
   SharedPtr<Tests> ptr2 = ptr1;
   EXPECT_TRUE(ptr1);
   EXPECT_TRUE(ptr2);
@@ -198,10 +196,8 @@ TEST(Struct, Operator) {
 }
 
 TEST(StructMethods, AppealOperator) {
-  Tests _test1(4, 3);
-  Tests _test2(5, -4);
-  SharedPtr<Tests> ptr1(&_test1);
-  SharedPtr<Tests> ptr2(&_test2);
+  SharedPtr<Tests> ptr1(new Tests (4, 3));
+  SharedPtr<Tests> ptr2(new Tests (5, -4));
   SharedPtr<Tests> ptr3(ptr1);
 
   std::stringstream str1;
@@ -221,8 +217,7 @@ TEST(StructMethods, AppealOperator) {
 }
 
 TEST(StructMethods, Reset) {
-  Tests _test1(4, 3);
-  SharedPtr<Tests> ptr1(&_test1);
+  SharedPtr<Tests> ptr1(new Tests (4, 3));
   SharedPtr<Tests> ptr2 = ptr1;
   SharedPtr<Tests> ptr3(ptr1);
 
@@ -236,17 +231,17 @@ TEST(StructMethods, Reset) {
 }
 
 TEST(StructMethods, ResetPtr) {
-  Tests _test1(4, 3);
-  Tests _test2(5, -4);
-  SharedPtr<Tests> ptr1(&_test1);
+  Tests* _test1 = new Tests (4, 3);
+  Tests* _test2 = new Tests (5, -4);
+  SharedPtr<Tests> ptr1(_test1);
   SharedPtr<Tests> ptr2 = ptr1;
   SharedPtr<Tests> ptr3(ptr1);
 
-  ptr1.reset(&_test2);
+  ptr1.reset(_test2);
   EXPECT_TRUE(ptr1);
   EXPECT_TRUE(ptr2);
   EXPECT_TRUE(ptr3);
   EXPECT_EQ(ptr1.use_count(), 1);
   EXPECT_EQ(ptr2.use_count(), 2);
   EXPECT_EQ(ptr3.use_count(), 2);
-}*/
+}

@@ -83,7 +83,7 @@ class SharedPtr {
       --*m_count;
       if (*m_count == 0){
         m_ptr->~T();
-        //delete m_ptr;
+        delete m_ptr;
         delete m_count;
       }
     }
