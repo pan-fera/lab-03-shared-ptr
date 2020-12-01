@@ -13,7 +13,9 @@
 template <typename T>
 class SharedPtr {
  public:
-  SharedPtr():m_ptr(nullptr), m_count(nullptr){std::cout << "Конструктор" <<std::endl;};
+  SharedPtr():m_ptr(nullptr), m_count(nullptr){
+    std::cout << "Конструктор" <<std::endl;
+  };
   SharedPtr(T* ptr):m_ptr(ptr), m_count(new std::atomic_uint(1)){std::cout << "Конструктор ptr" <<std::endl;};
   //консруктор копирования
   SharedPtr(const SharedPtr& r):m_ptr(r.m_ptr){
@@ -21,7 +23,7 @@ class SharedPtr {
     m_count=r.m_count;
     std::cout << "Конструктор копирования" <<std::endl;
                                                   };
-  //конструктор перемещения
+  //конструктор перемещения значения r-value
   SharedPtr(SharedPtr&& r):m_ptr(r.m_ptr), m_count(r.m_count){
     r.m_ptr = nullptr;
     r.m_count = nullptr;
@@ -36,13 +38,19 @@ class SharedPtr {
     if (this != &r) {
       reset();
       m_ptr = r.m_ptr;
-      ++*r.m_count;
+
+      if (r.m_count != nullptr)
+      ++(*r.m_count);  // nullptr
+
       m_count = r.m_count;
+
       std::cout << "Перегруженный оператор копирования" <<std::endl;
     }
     else {
       std::cout << "Самокопирование" << std::endl;
+      throw std::runtime_error("Self-copying");
     }
+
     return *this;
   }
   auto operator=(SharedPtr&& r) -> SharedPtr&{
@@ -55,15 +63,14 @@ class SharedPtr {
     }
     else {
       std::cout << "Самоприсваивание" << std::endl;
+      throw std::runtime_error("Self-assignment");
     }
+    return *this;
   }
 
   // проверяет, указывает ли указатель на объект
   operator bool() const{
-    if (m_ptr!= nullptr)
-      return true;
-    else
-      return false;
+    return (m_ptr!= nullptr);
   }
   auto operator*() const -> T&{
     if(m_ptr == nullptr)
