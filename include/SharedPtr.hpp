@@ -1,9 +1,10 @@
 //
 // Created by hacker on 28.11.2020.
 //
+// Copyright 2020 hacker
 
-#ifndef SHARED_PTR_SHAREDPTR_HPP
-#define SHARED_PTR_SHAREDPTR_HPP
+#ifndef INCLUDE_SHAREDPTR_HPP_
+#define INCLUDE_SHAREDPTR_HPP_
 
 #include <atomic>
 #include <cstdlib>
@@ -13,24 +14,19 @@
 template <typename T>
 class SharedPtr {
  public:
-  SharedPtr():m_ptr(nullptr), m_count(nullptr){
-    std::cout << "Конструктор" <<std::endl;
-  };
-  SharedPtr(T* ptr):m_ptr(ptr), m_count(new std::atomic_uint(1)){std::cout << "Конструктор ptr" <<std::endl;};
+  SharedPtr():m_ptr(nullptr), m_count(nullptr){};
+   explicit SharedPtr(T* ptr):m_ptr(ptr), m_count(new std::atomic_uint(1)){};
   //консруктор копирования
   SharedPtr(const SharedPtr& r):m_ptr(r.m_ptr){
     ++*r.m_count;
-    m_count=r.m_count;
-    std::cout << "Конструктор копирования" <<std::endl;
-                                                  };
+    m_count = r.m_count;
+  }
   //конструктор перемещения значения r-value
   SharedPtr(SharedPtr&& r):m_ptr(r.m_ptr), m_count(r.m_count){
     r.m_ptr = nullptr;
     r.m_count = nullptr;
-    std::cout << "Конструктор перемещения" <<std::endl;
-  };
+  }
   ~SharedPtr() {
-    std::cout<<"Деструктор"<<std::endl;
     reset();
   }
   //оператор копирования
@@ -43,11 +39,7 @@ class SharedPtr {
       ++(*r.m_count);  // nullptr
 
       m_count = r.m_count;
-
-      std::cout << "Перегруженный оператор копирования" <<std::endl;
-    }
-    else {
-      std::cout << "Самокопирование" << std::endl;
+    }else{
       throw std::runtime_error("Self-copying");
     }
 
@@ -60,9 +52,7 @@ class SharedPtr {
     m_count = r.m_count;
     r.m_ptr = nullptr;
     r.m_count = nullptr;
-    }
-    else {
-      std::cout << "Самоприсваивание" << std::endl;
+    }else{
       throw std::runtime_error("Self-assignment");
     }
     return *this;
@@ -73,13 +63,13 @@ class SharedPtr {
     return (m_ptr!= nullptr);
   }
   auto operator*() const -> T&{
-    if(m_ptr == nullptr)
+    if (m_ptr == nullptr)
       throw std::runtime_error("Ptr is nullptr");
     else
       return *m_ptr;
   }
   auto operator->() const -> T*{
-    if(m_ptr == nullptr)
+    if (m_ptr == nullptr)
       throw std::runtime_error("Ptr is nullptr");
     else
       return m_ptr;
@@ -89,12 +79,10 @@ class SharedPtr {
     return m_ptr;
   }
   void reset(){
-    if(m_count != nullptr){
+    if (m_count != nullptr){
       --*m_count;
       if (*m_count == 0){
-
         m_ptr->~T();
-        //delete m_ptr;
         delete m_count;
       }
     }
@@ -110,9 +98,10 @@ class SharedPtr {
     std::swap(m_count, r.m_count);
     std::swap(m_ptr, r.m_ptr);
   }
-  // возвращает количество объектов SharedPtr, которые ссылаются на тот же управляемый объект
+  // возвращает количество объектов SharedPtr,
+  // которые ссылаются на тот же управляемый объект
 auto use_count() const -> size_t{
-  if(m_count != nullptr)
+  if (m_count != nullptr)
     return *m_count;
   else
     return 0;
@@ -122,4 +111,4 @@ protected:
   T* m_ptr;
   std::atomic_uint* m_count;
 };
-#endif  // SHARED_PTR_SHAREDPTR_HPP
+#endif  // INCLUDE_SHAREDPTR_HPP_

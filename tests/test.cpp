@@ -1,4 +1,4 @@
-// Copyright 2020 Your Name <your_email>
+// Copyright 2020 hacker
 #include <SharedPtr.hpp>
 #include <gtest/gtest.h>
 
@@ -17,8 +17,8 @@ TEST(Constructor, EmptyConstructor) {
 TEST(Constructor, PointerConstructor) {
   int val = 5;
   int *pointer = (int*) malloc(sizeof(int));
-  *pointer=val;
-  SharedPtr<int> ptr1 (pointer);
+  *pointer = val;
+  SharedPtr<int> ptr1(pointer);
   EXPECT_TRUE(ptr1);
   EXPECT_EQ(ptr1.use_count(), 1);
   EXPECT_EQ(*ptr1, *pointer);
@@ -28,7 +28,7 @@ TEST(Constructor, PointerConstructor) {
 TEST(Constructor, CopyConstructor) {
   int val = 5;
   int *pointer = (int*) malloc(sizeof(int));
-  *pointer=val;
+  *pointer = val;
   SharedPtr<int> ptr1(pointer);
   SharedPtr<int> ptr2(ptr1);
   SharedPtr<int> ptr3(ptr1);
@@ -46,9 +46,8 @@ TEST(Constructor, CopyConstructor) {
 TEST(Constructor, MoveConstructor) {
   int val = 5;
   int *pointer = (int*) malloc(sizeof(int));
-  *pointer=val;
+  *pointer = val;
   SharedPtr<int> ptr1(pointer);
-
   SharedPtr<int> ptr2(std::move(ptr1));
 
   EXPECT_FALSE(ptr1);
@@ -64,7 +63,7 @@ TEST(Constructor, MoveConstructor) {
 TEST(Operator, CopyOperator) {
   int val = 5;
   int *pointer = (int*) malloc(sizeof(int));
-  *pointer=val;
+  *pointer = val;
   SharedPtr<int> ptr1(pointer);
   SharedPtr<int> ptr2 = ptr1;
 
@@ -93,13 +92,13 @@ TEST(Operator, CopyOperator) {
   EXPECT_TRUE(ptr2.get() == nullptr);
   EXPECT_TRUE(ptr3.get() == nullptr);
 
-  EXPECT_THROW(ptr3=ptr3, std::runtime_error);
+  EXPECT_THROW(ptr3 = ptr3, std::runtime_error);
 }
 
 TEST(Operator, MoveOperator) {
   int val = 5;
   int *pointer = (int*) malloc(sizeof(int));
-  *pointer=val;
+  *pointer = val;
   SharedPtr<int> ptr1(pointer);
   SharedPtr<int> ptr2(ptr1);
   SharedPtr<int> ptr3 = std::move(ptr1);
@@ -150,9 +149,15 @@ TEST(Methods, Swap) {
 struct Tests {
  public:
   int _x, _y;
-  Tests(){ _x=0; _y=0;}
-  Tests(int x, int y){_x=x; _y=y;}
-  ~Tests(){ std::cout<<"destruc"<<std::endl;}
+  Tests(){
+    _x = 0;
+    _y = 0;
+  }
+  Tests(int x, int y){
+    _x = x;
+    _y = y;
+  }
+  ~Tests(){}
 };
 
 TEST(Struct, Constructor) {
@@ -176,13 +181,13 @@ TEST(Struct, Constructor) {
 TEST(Struct, Operator) {
   Tests _test1(4, 3);
   SharedPtr<Tests> ptr1(&_test1);
-  SharedPtr<Tests> ptr2=ptr1;
+  SharedPtr<Tests> ptr2 = ptr1;
   EXPECT_TRUE(ptr1);
   EXPECT_TRUE(ptr2);
   EXPECT_EQ(ptr1.use_count(), 2);
   EXPECT_EQ(ptr2.use_count(), 2);
 
-  SharedPtr<Tests> ptr3=std::move(ptr1);
+  SharedPtr<Tests> ptr3 = std::move(ptr1);
   EXPECT_FALSE(ptr1);
   EXPECT_TRUE(ptr2);
   EXPECT_TRUE(ptr3);
@@ -191,7 +196,7 @@ TEST(Struct, Operator) {
   EXPECT_EQ(ptr3.use_count(), 2);
 
   std::stringstream str1;
-  EXPECT_THROW(str1<<ptr1->_x, std::runtime_error);
+  EXPECT_THROW(str1 << ptr1->_x, std::runtime_error);
 }
 
 TEST(StructMethods, AppealOperator) {
@@ -205,9 +210,9 @@ TEST(StructMethods, AppealOperator) {
   std::stringstream str2;
   std::stringstream str3;
 
-  str1<<ptr1->_x<<" "<<ptr1->_y;
-  str2<<ptr2->_x<<" "<<ptr2->_y;
-  str3<<ptr3->_x<<" "<<ptr3->_y;
+  str1 << ptr1->_x << " " << ptr1->_y;
+  str2 << ptr2->_x << " " << ptr2->_y;
+  str3 << ptr3->_x << " " << ptr3->_y;
 
   std::string ref1 = "4 3";
   std::string ref2 = "5 -4";
@@ -220,7 +225,7 @@ TEST(StructMethods, AppealOperator) {
 TEST(StructMethods, Reset) {
   Tests _test1(4, 3);
   SharedPtr<Tests> ptr1(&_test1);
-  SharedPtr<Tests> ptr2=ptr1;
+  SharedPtr<Tests> ptr2 = ptr1;
   SharedPtr<Tests> ptr3(ptr1);
 
   ptr1.reset();
@@ -236,7 +241,7 @@ TEST(StructMethods, ResetPtr) {
   Tests _test1(4, 3);
   Tests _test2(5, -4);
   SharedPtr<Tests> ptr1(&_test1);
-  SharedPtr<Tests> ptr2=ptr1;
+  SharedPtr<Tests> ptr2 = ptr1;
   SharedPtr<Tests> ptr3(ptr1);
 
   ptr1.reset(&_test2);
