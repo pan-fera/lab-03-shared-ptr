@@ -82,7 +82,8 @@ class SharedPtr {
     if (m_count != nullptr){
       --*m_count;
       if (*m_count == 0){
-        m_ptr->~T();
+        //m_ptr->~T();
+        delete m_ptr;
         delete m_count;
       }
     }

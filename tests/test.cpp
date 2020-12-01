@@ -144,7 +144,7 @@ TEST(Methods, Swap) {
   EXPECT_EQ(ptr2.use_count(), 1);
 }
 
-struct Tests {
+/*struct Tests {
  public:
   int _x, _y;
   Tests(){
@@ -249,4 +249,4 @@ TEST(StructMethods, ResetPtr) {
   EXPECT_EQ(ptr1.use_count(), 1);
   EXPECT_EQ(ptr2.use_count(), 2);
   EXPECT_EQ(ptr3.use_count(), 2);
-}
+}*/
