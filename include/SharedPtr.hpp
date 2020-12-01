@@ -46,15 +46,12 @@ class SharedPtr {
     return *this;
   }
   auto operator=(SharedPtr&& r) -> SharedPtr&{
-    if (this != &r) {
+    if (this != &r)
     reset();
     m_ptr = r.m_ptr;
     m_count = r.m_count;
     r.m_ptr = nullptr;
     r.m_count = nullptr;
-    }else{
-      throw std::runtime_error("Self-assignment");
-    }
     return *this;
   }
 
