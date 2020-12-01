@@ -36,7 +36,7 @@ class SharedPtr {
       m_ptr = r.m_ptr;
 
       if (r.m_count != nullptr)
-      ++(*r.m_count);  // nullptr
+        ++(*r.m_count);  // nullptr
 
       m_count = r.m_count;
     }else{

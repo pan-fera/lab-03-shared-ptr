@@ -65,7 +65,8 @@ TEST(Operator, CopyOperator) {
   int *pointer = new int (val);
   *pointer = val;
   SharedPtr<int> ptr1(pointer);
-  SharedPtr<int> ptr2 = ptr1;
+  SharedPtr<int> ptr2;
+  ptr2 = ptr1;
 
   EXPECT_TRUE(ptr1);
   EXPECT_TRUE(ptr2);
@@ -101,7 +102,8 @@ TEST(Operator, MoveOperator) {
   *pointer = val;
   SharedPtr<int> ptr1(pointer);
   SharedPtr<int> ptr2(ptr1);
-  SharedPtr<int> ptr3 = std::move(ptr1);
+  SharedPtr<int> ptr3;
+  ptr3 = std::move(ptr1);
 
   EXPECT_FALSE(ptr1);
   EXPECT_TRUE(ptr3);
@@ -177,13 +179,15 @@ TEST(Struct, Constructor) {
 
 TEST(Struct, Operator) {
   SharedPtr<Tests> ptr1(new Tests (4, 3));
-  SharedPtr<Tests> ptr2 = ptr1;
+  SharedPtr<Tests> ptr2;
+  ptr2 = ptr1;
   EXPECT_TRUE(ptr1);
   EXPECT_TRUE(ptr2);
   EXPECT_EQ(ptr1.use_count(), 2);
   EXPECT_EQ(ptr2.use_count(), 2);
 
-  SharedPtr<Tests> ptr3 = std::move(ptr1);
+  SharedPtr<Tests> ptr3;
+  ptr3 = std::move(ptr1);
   EXPECT_FALSE(ptr1);
   EXPECT_TRUE(ptr2);
   EXPECT_TRUE(ptr3);
