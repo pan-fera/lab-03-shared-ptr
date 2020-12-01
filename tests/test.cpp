@@ -16,7 +16,7 @@ TEST(Constructor, EmptyConstructor) {
 
 TEST(Constructor, PointerConstructor) {
   int val = 5;
-  int *pointer = (int*) malloc(sizeof(int));
+  int *pointer = reinterpret_cast<int*>(malloc(sizeof(int)));;
   *pointer = val;
   SharedPtr<int> ptr1(pointer);
   EXPECT_TRUE(ptr1);
@@ -27,7 +27,7 @@ TEST(Constructor, PointerConstructor) {
 
 TEST(Constructor, CopyConstructor) {
   int val = 5;
-  int *pointer = (int*) malloc(sizeof(int));
+  int *pointer = reinterpret_cast<int*>(malloc(sizeof(int)));
   *pointer = val;
   SharedPtr<int> ptr1(pointer);
   SharedPtr<int> ptr2(ptr1);
@@ -45,7 +45,7 @@ TEST(Constructor, CopyConstructor) {
 
 TEST(Constructor, MoveConstructor) {
   int val = 5;
-  int *pointer = (int*) malloc(sizeof(int));
+  int *pointer = reinterpret_cast<int*>(malloc(sizeof(int)));
   *pointer = val;
   SharedPtr<int> ptr1(pointer);
   SharedPtr<int> ptr2(std::move(ptr1));
@@ -62,7 +62,7 @@ TEST(Constructor, MoveConstructor) {
 
 TEST(Operator, CopyOperator) {
   int val = 5;
-  int *pointer = (int*) malloc(sizeof(int));
+  int *pointer = reinterpret_cast<int*>(malloc(sizeof(int)));
   *pointer = val;
   SharedPtr<int> ptr1(pointer);
   SharedPtr<int> ptr2 = ptr1;
@@ -97,7 +97,7 @@ TEST(Operator, CopyOperator) {
 
 TEST(Operator, MoveOperator) {
   int val = 5;
-  int *pointer = (int*) malloc(sizeof(int));
+  int *pointer = reinterpret_cast<int*>(malloc(sizeof(int)));
   *pointer = val;
   SharedPtr<int> ptr1(pointer);
   SharedPtr<int> ptr2(ptr1);

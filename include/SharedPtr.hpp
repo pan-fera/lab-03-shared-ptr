@@ -14,8 +14,8 @@
 template <typename T>
 class SharedPtr {
  public:
-  SharedPtr():m_ptr(nullptr), m_count(nullptr){};
-   explicit SharedPtr(T* ptr):m_ptr(ptr), m_count(new std::atomic_uint(1)){};
+  SharedPtr():m_ptr(nullptr), m_count(nullptr){}
+   explicit SharedPtr(T* ptr):m_ptr(ptr), m_count(new std::atomic_uint(1)){}
   //консруктор копирования
   SharedPtr(const SharedPtr& r):m_ptr(r.m_ptr){
     ++*r.m_count;
