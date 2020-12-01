@@ -148,8 +148,20 @@ TEST(Methods, Swap) {
 }
 
 struct Tests {
+ public:
   int _x, _y;
-  Tests(){ _x=0; _y=0;}
-  Tests(int x, int y): _x(x), _y(y){}
-  ~Tests(){}
+  /*Tests(){ _x=0; _y=0;}
+  Tests(int x, int y){_x=x; _y=y;}
+  ~Tests(){}*/
 };
+
+TEST(Struct, Test1) {
+  Tests _test1={4, 3};
+  SharedPtr<Tests> ptr1;
+  EXPECT_FALSE(ptr1);
+  Tests* p = &_test1;
+  std::cout<<p->_x<<" "<<p->_y<<std::endl;
+  SharedPtr<Tests> ptr2(p);
+  //EXPECT_TRUE(ptr1);
+
+}
