@@ -31,7 +31,7 @@ add_library(shared-ptr INTERFACE)
 add_executable(demo
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
 )
-target_link_libraries(demo shared-ptr) #если убрать, то прописать путь к хэдеру.
+#target_link_libraries(demo shared-ptr) #если убрать, то прописать путь к хэдеру.
 
 add_executable(tests
   ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp

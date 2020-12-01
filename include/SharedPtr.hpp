@@ -54,11 +54,22 @@ class SharedPtr {
   }
 
   // проверяет, указывает ли указатель на объект
-  operator bool() const;
-  auto operator*() const -> T&;
-  auto operator->() const -> T*;
+  operator bool() const{
+    if (m_ptr!= nullptr)
+      return true;
+    else
+      return false;
+  }
+  auto operator*() const -> T&{
+    return *m_ptr;
+  }
+  auto operator->() const -> T*{
+    return m_ptr;
+  }
 
-  auto get() -> T*;
+  auto get() -> T*{
+    return m_ptr;
+  }
   void reset(){
     if(m_count != nullptr){
       --*m_count;
@@ -81,7 +92,12 @@ class SharedPtr {
     std::swap(m_ptr, r.m_ptr);
   }
   // возвращает количество объектов SharedPtr, которые ссылаются на тот же управляемый объект
-//auto use_count() const -> size_t;
+auto use_count() const -> size_t{
+  if(m_count != nullptr)
+    return *m_count;
+  else
+    return 0;
+}
  private:
   T* m_ptr;
   std::atomic_uint* m_count;
