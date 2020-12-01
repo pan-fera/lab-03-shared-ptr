@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <algorithm>    // std::swap
-
+#include <utility>
 template <typename T>
 class SharedPtr {
  public:
@@ -79,7 +79,10 @@ class SharedPtr {
       return *m_ptr;
   }
   auto operator->() const -> T*{
-    return m_ptr;
+    if(m_ptr == nullptr)
+      throw std::runtime_error("Ptr is nullptr");
+    else
+      return m_ptr;
   }
 
   auto get() -> T*{
@@ -91,6 +94,7 @@ class SharedPtr {
       if (*m_count == 0){
 
         m_ptr->~T();
+        //delete m_ptr;
         delete m_count;
       }
     }

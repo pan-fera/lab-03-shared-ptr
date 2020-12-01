@@ -150,18 +150,100 @@ TEST(Methods, Swap) {
 struct Tests {
  public:
   int _x, _y;
-  /*Tests(){ _x=0; _y=0;}
+  Tests(){ _x=0; _y=0;}
   Tests(int x, int y){_x=x; _y=y;}
-  ~Tests(){}*/
+  ~Tests(){ std::cout<<"destruc"<<std::endl;}
 };
 
-TEST(Struct, Test1) {
-  Tests _test1={4, 3};
-  SharedPtr<Tests> ptr1;
+TEST(Struct, Constructor) {
+  Tests _test1(4, 3);
+  SharedPtr<Tests> ptr1(&_test1);
+  SharedPtr<Tests> ptr2(ptr1);
+  EXPECT_TRUE(ptr1);
+  EXPECT_TRUE(ptr2);
+  EXPECT_EQ(ptr1.use_count(), 2);
+  EXPECT_EQ(ptr2.use_count(), 2);
+
+  SharedPtr<Tests> ptr3(std::move(ptr1));
   EXPECT_FALSE(ptr1);
-  Tests* p = &_test1;
-  std::cout<<p->_x<<" "<<p->_y<<std::endl;
-  SharedPtr<Tests> ptr2(p);
-  std::cout<<"dwede"<<std::endl;
-  //EXPECT_TRUE(ptr1);
+  EXPECT_TRUE(ptr2);
+  EXPECT_TRUE(ptr3);
+  EXPECT_EQ(ptr1.use_count(), 0);
+  EXPECT_EQ(ptr2.use_count(), 2);
+  EXPECT_EQ(ptr3.use_count(), 2);
+}
+
+TEST(Struct, Operator) {
+  Tests _test1(4, 3);
+  SharedPtr<Tests> ptr1(&_test1);
+  SharedPtr<Tests> ptr2=ptr1;
+  EXPECT_TRUE(ptr1);
+  EXPECT_TRUE(ptr2);
+  EXPECT_EQ(ptr1.use_count(), 2);
+  EXPECT_EQ(ptr2.use_count(), 2);
+
+  SharedPtr<Tests> ptr3=std::move(ptr1);
+  EXPECT_FALSE(ptr1);
+  EXPECT_TRUE(ptr2);
+  EXPECT_TRUE(ptr3);
+  EXPECT_EQ(ptr1.use_count(), 0);
+  EXPECT_EQ(ptr2.use_count(), 2);
+  EXPECT_EQ(ptr3.use_count(), 2);
+
+  std::stringstream str1;
+  EXPECT_THROW(str1<<ptr1->_x, std::runtime_error);
+}
+
+TEST(StructMethods, AppealOperator) {
+  Tests _test1(4, 3);
+  Tests _test2(5, -4);
+  SharedPtr<Tests> ptr1(&_test1);
+  SharedPtr<Tests> ptr2(&_test2);
+  SharedPtr<Tests> ptr3(ptr1);
+
+  std::stringstream str1;
+  std::stringstream str2;
+  std::stringstream str3;
+
+  str1<<ptr1->_x<<" "<<ptr1->_y;
+  str1<<ptr2->_x<<" "<<ptr2->_y;
+  str1<<ptr3->_x<<" "<<ptr3->_y;
+
+  std::string ref1 = "4 3";
+  std::string ref2 = "5 -4";
+
+  EXPECT_EQ(str1.str(), ref1);
+  EXPECT_EQ(str2.str(), ref2);
+  EXPECT_EQ(str3.str(), ref1);
+}
+
+TEST(StructMethods, Reset) {
+  Tests _test1(4, 3);
+  SharedPtr<Tests> ptr1(&_test1);
+  SharedPtr<Tests> ptr2=ptr1;
+  SharedPtr<Tests> ptr3(ptr1);
+
+  ptr1.reset();
+  EXPECT_FALSE(ptr1);
+  EXPECT_TRUE(ptr2);
+  EXPECT_TRUE(ptr3);
+  EXPECT_EQ(ptr1.use_count(), 0);
+  EXPECT_EQ(ptr2.use_count(), 2);
+  EXPECT_EQ(ptr3.use_count(), 2);
+}
+
+TEST(StructMethods, ResetPtr) {
+  Tests _test1(4, 3);
+  Tests _test2(5, -4);
+  SharedPtr<Tests> ptr1(&_test1);
+  SharedPtr<Tests> ptr2=ptr1;
+  SharedPtr<Tests> ptr3(ptr1);
+
+  ptr1.reset(&_test2);
+  EXPECT_TRUE(ptr1);
+  EXPECT_TRUE(ptr2);
+  EXPECT_TRUE(ptr3);
+  EXPECT_EQ(ptr1.use_count(), 1);
+  EXPECT_EQ(ptr2.use_count(), 2);
+  EXPECT_EQ(ptr3.use_count(), 2);
 }
