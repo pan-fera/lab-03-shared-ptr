@@ -41,9 +41,6 @@ TEST(Constructor, CopyConstructor) {
   EXPECT_EQ(*ptr2, *pointer);
   EXPECT_TRUE(ptr1.get() == pointer);
   EXPECT_TRUE(ptr2.get() == pointer);
-
-  EXPECT_THROW(SharedPtr<int> ptr4(ptr4),
-               std::runtime_error);
 }
 
 TEST(Constructor, MoveConstructor) {
@@ -61,8 +58,6 @@ TEST(Constructor, MoveConstructor) {
   EXPECT_EQ(*ptr2, *pointer);
   EXPECT_TRUE(ptr1.get()== nullptr);
   EXPECT_TRUE(ptr2.get() == pointer);
-  EXPECT_THROW(SharedPtr<int> ptr4(std::move(ptr4)),
-               std::runtime_error);
 }
 
 TEST(Operator, CopyOperator) {
@@ -97,11 +92,6 @@ TEST(Operator, CopyOperator) {
   EXPECT_TRUE(ptr1.get() == pointer);
   EXPECT_TRUE(ptr2.get() == nullptr);
   EXPECT_TRUE(ptr3.get() == nullptr);
-
-  EXPECT_THROW(ptr3 = ptr3, std::runtime_error);
-  SharedPtr<int> ptr4;
-  EXPECT_THROW(ptr4 = ptr4,
-               std::runtime_error);
 }
 
 TEST(Operator, MoveOperator) {
@@ -121,9 +111,6 @@ TEST(Operator, MoveOperator) {
   EXPECT_EQ(*ptr3, *pointer);
   EXPECT_TRUE(ptr1.get()== nullptr);
   EXPECT_TRUE(ptr3.get() == pointer);
-  SharedPtr<int> ptr4;
-  EXPECT_THROW(ptr4 = std::move(ptr4),
-               std::runtime_error);
 }
 
 TEST(Methods, Reset) {
@@ -157,29 +144,29 @@ TEST(Methods, Swap) {
   EXPECT_EQ(ptr2.use_count(), 1);
 }
 
-struct Tests {
+struct Test1 {
  public:
   int _x, _y;
-  Tests(){
+  Test1(){
     _x = 0;
     _y = 0;
   }
-  Tests(int x, int y){
+  Test1(int x, int y){
     _x = x;
     _y = y;
   }
-  ~Tests(){}
+  ~Test1(){}
 };
 
 TEST(Struct, Constructor) {
-  SharedPtr<Tests> ptr1(new Tests (4, 3));
-  SharedPtr<Tests> ptr2(ptr1);
+  SharedPtr<Test1> ptr1(new Test1 (4, 3));
+  SharedPtr<Test1> ptr2(ptr1);
   EXPECT_TRUE(ptr1);
   EXPECT_TRUE(ptr2);
   EXPECT_EQ(ptr1.use_count(), 2);
   EXPECT_EQ(ptr2.use_count(), 2);
 
-  SharedPtr<Tests> ptr3(std::move(ptr1));
+  SharedPtr<Test1> ptr3(std::move(ptr1));
   EXPECT_FALSE(ptr1);
   EXPECT_TRUE(ptr2);
   EXPECT_TRUE(ptr3);
@@ -189,15 +176,15 @@ TEST(Struct, Constructor) {
 }
 
 TEST(Struct, Operator) {
-  SharedPtr<Tests> ptr1(new Tests (4, 3));
-  SharedPtr<Tests> ptr2;
+  SharedPtr<Test1> ptr1(new Test1 (4, 3));
+  SharedPtr<Test1> ptr2;
   ptr2 = ptr1;
   EXPECT_TRUE(ptr1);
   EXPECT_TRUE(ptr2);
   EXPECT_EQ(ptr1.use_count(), 2);
   EXPECT_EQ(ptr2.use_count(), 2);
 
-  SharedPtr<Tests> ptr3;
+  SharedPtr<Test1> ptr3;
   ptr3 = std::move(ptr1);
   EXPECT_FALSE(ptr1);
   EXPECT_TRUE(ptr2);
@@ -211,9 +198,9 @@ TEST(Struct, Operator) {
 }
 
 TEST(StructMethods, AppealOperator) {
-  SharedPtr<Tests> ptr1(new Tests (4, 3));
-  SharedPtr<Tests> ptr2(new Tests (5, -4));
-  SharedPtr<Tests> ptr3(ptr1);
+  SharedPtr<Test1> ptr1(new Test1 (4, 3));
+  SharedPtr<Test1> ptr2(new Test1 (5, -4));
+  SharedPtr<Test1> ptr3(ptr1);
 
   std::stringstream str1;
   std::stringstream str2;
@@ -232,9 +219,9 @@ TEST(StructMethods, AppealOperator) {
 }
 
 TEST(StructMethods, Reset) {
-  SharedPtr<Tests> ptr1(new Tests (4, 3));
-  SharedPtr<Tests> ptr2 = ptr1;
-  SharedPtr<Tests> ptr3(ptr1);
+  SharedPtr<Test1> ptr1(new Test1 (4, 3));
+  SharedPtr<Test1> ptr2 = ptr1;
+  SharedPtr<Test1> ptr3(ptr1);
 
   ptr1.reset();
   EXPECT_FALSE(ptr1);
@@ -246,11 +233,11 @@ TEST(StructMethods, Reset) {
 }
 
 TEST(StructMethods, ResetPtr) {
-  Tests* _test1 = new Tests (4, 3);
-  Tests* _test2 = new Tests (5, -4);
-  SharedPtr<Tests> ptr1(_test1);
-  SharedPtr<Tests> ptr2 = ptr1;
-  SharedPtr<Tests> ptr3(ptr1);
+  Test1* _test1 = new Test1 (4, 3);
+  Test1* _test2 = new Test1 (5, -4);
+  SharedPtr<Test1> ptr1(_test1);
+  SharedPtr<Test1> ptr2 = ptr1;
+  SharedPtr<Test1> ptr3(ptr1);
 
   ptr1.reset(_test2);
   EXPECT_TRUE(ptr1);
@@ -259,4 +246,27 @@ TEST(StructMethods, ResetPtr) {
   EXPECT_EQ(ptr1.use_count(), 1);
   EXPECT_EQ(ptr2.use_count(), 2);
   EXPECT_EQ(ptr3.use_count(), 2);
+}
+
+struct Test2 { Test2& operator= (Test2&&) = delete; };
+
+TEST(MoveTest, AssignConstruct) {
+  Test2* _test1 = new Test2;
+  SharedPtr<Test2> ptr1(_test1);
+  EXPECT_THROW(SharedPtr<Test2> ptr2(ptr1),
+               std::runtime_error);
+  EXPECT_THROW(SharedPtr<Test2> ptr3(std::move(ptr1)),
+               std::runtime_error);
+
+  SharedPtr<Test2> ptr4;
+  SharedPtr<Test2> ptr5;
+  EXPECT_THROW(ptr4 = ptr1,
+               std::runtime_error);
+  EXPECT_THROW(ptr5 = std::move(ptr1),
+               std::runtime_error);
+
+  EXPECT_EQ(std::is_move_assignable<SharedPtr<std::string>>::value,
+            true);
+  EXPECT_EQ(std::is_move_constructible<SharedPtr<std::string>>::value,
+            true);
 }
