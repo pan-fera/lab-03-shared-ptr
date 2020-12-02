@@ -7,31 +7,42 @@
 #define INCLUDE_SHAREDPTR_HPP_
 
 #include <atomic>
-#include <cstdlib>
+//#include <cstdlib>
 #include <iostream>
-#include <algorithm>    // std::swap
+#include <algorithm>
 #include <utility>
 template <typename T>
 class SharedPtr {
  public:
   SharedPtr():m_ptr(nullptr), m_count(nullptr){}
    explicit SharedPtr(T* ptr):m_ptr(ptr), m_count(new std::atomic_uint(1)){}
-  //консруктор копирования
-  SharedPtr(const SharedPtr& r):m_ptr(r.m_ptr){
-    ++*r.m_count;
-    m_count = r.m_count;
+
+  SharedPtr(const SharedPtr& r){
+    if(std::is_move_constructible<T>::value && this!=&r) {
+      m_ptr = r.m_ptr;
+      ++*r.m_count;
+      m_count = r.m_count;
+    }else{
+      throw std::runtime_error("Not copying");
+    }
   }
-  //конструктор перемещения значения r-value
-  SharedPtr(SharedPtr&& r):m_ptr(r.m_ptr), m_count(r.m_count){
-    r.m_ptr = nullptr;
-    r.m_count = nullptr;
+
+  SharedPtr(SharedPtr&& r){
+    if(std::is_move_assignable<T>::value && this!=&r) {
+      m_ptr = r.m_ptr;
+      m_count = r.m_count;
+      r.m_ptr = nullptr;
+      r.m_count = nullptr;
+    }else{
+      throw std::runtime_error("Not moving");
+    }
   }
   ~SharedPtr() {
     reset();
   }
-  //оператор копирования
+
   auto operator=(const SharedPtr& r) -> SharedPtr&{
-    if (this != &r) {
+    if(std::is_move_constructible<T>::value && this!=&r) {
       reset();
       m_ptr = r.m_ptr;
 
@@ -40,22 +51,23 @@ class SharedPtr {
 
       m_count = r.m_count;
     }else{
-      throw std::runtime_error("Self-copying");
+      throw std::runtime_error("Not copying");
     }
 
     return *this;
   }
   auto operator=(SharedPtr&& r) -> SharedPtr&{
-    if (this != &r)
-    reset();
-    m_ptr = r.m_ptr;
-    m_count = r.m_count;
-    r.m_ptr = nullptr;
-    r.m_count = nullptr;
+    if(std::is_move_assignable<T>::value && this!=&r) {
+      reset();
+      m_ptr = r.m_ptr;
+      m_count = r.m_count;
+      r.m_ptr = nullptr;
+      r.m_count = nullptr;
+    }else{
+      throw std::runtime_error("Not moving");
+    }
     return *this;
   }
-
-  // проверяет, указывает ли указатель на объект
   operator bool() const{
     return (m_ptr!= nullptr);
   }
@@ -71,7 +83,6 @@ class SharedPtr {
     else
       return m_ptr;
   }
-
   auto get() -> T*{
     return m_ptr;
   }
@@ -96,8 +107,6 @@ class SharedPtr {
     std::swap(m_count, r.m_count);
     std::swap(m_ptr, r.m_ptr);
   }
-  // возвращает количество объектов SharedPtr,
-  // которые ссылаются на тот же управляемый объект
 auto use_count() const -> size_t{
   if (m_count != nullptr)
     return *m_count;
