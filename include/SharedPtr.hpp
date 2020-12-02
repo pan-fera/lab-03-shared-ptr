@@ -18,7 +18,7 @@ class SharedPtr {
    explicit SharedPtr(T* ptr):m_ptr(ptr), m_count(new std::atomic_uint(1)){}
 
   SharedPtr(const SharedPtr& r){
-    if(std::is_move_constructible<T>::value && this!=&r) {
+    if(std::is_move_constructible<T>::value && this != &r) {
       m_ptr = r.m_ptr;
       ++*r.m_count;
       m_count = r.m_count;
@@ -28,7 +28,7 @@ class SharedPtr {
   }
 
   SharedPtr(SharedPtr&& r){
-    if(std::is_move_assignable<T>::value && this!=&r) {
+    if(std::is_move_assignable<T>::value && this != &r) {
       m_ptr = r.m_ptr;
       m_count = r.m_count;
       r.m_ptr = nullptr;
@@ -42,7 +42,7 @@ class SharedPtr {
   }
 
   auto operator=(const SharedPtr& r) -> SharedPtr&{
-    if(std::is_move_constructible<T>::value && this!=&r) {
+    if(std::is_move_constructible<T>::value && this != &r) {
       reset();
       m_ptr = r.m_ptr;
 
@@ -57,7 +57,7 @@ class SharedPtr {
     return *this;
   }
   auto operator=(SharedPtr&& r) -> SharedPtr&{
-    if(std::is_move_assignable<T>::value && this!=&r) {
+    if(std::is_move_assignable<T>::value && this != &r) {
       reset();
       m_ptr = r.m_ptr;
       m_count = r.m_count;

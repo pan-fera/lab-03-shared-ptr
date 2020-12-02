@@ -41,6 +41,9 @@ TEST(Constructor, CopyConstructor) {
   EXPECT_EQ(*ptr2, *pointer);
   EXPECT_TRUE(ptr1.get() == pointer);
   EXPECT_TRUE(ptr2.get() == pointer);
+
+  EXPECT_THROW(SharedPtr<int> ptr4(ptr4),
+               std::runtime_error);
 }
 
 TEST(Constructor, MoveConstructor) {
@@ -58,6 +61,8 @@ TEST(Constructor, MoveConstructor) {
   EXPECT_EQ(*ptr2, *pointer);
   EXPECT_TRUE(ptr1.get()== nullptr);
   EXPECT_TRUE(ptr2.get() == pointer);
+  EXPECT_THROW(SharedPtr<int> ptr4(std::move(ptr4)),
+               std::runtime_error);
 }
 
 TEST(Operator, CopyOperator) {
@@ -94,6 +99,9 @@ TEST(Operator, CopyOperator) {
   EXPECT_TRUE(ptr3.get() == nullptr);
 
   EXPECT_THROW(ptr3 = ptr3, std::runtime_error);
+  SharedPtr<int> ptr4;
+  EXPECT_THROW(ptr4 = ptr4,
+               std::runtime_error);
 }
 
 TEST(Operator, MoveOperator) {
@@ -113,6 +121,9 @@ TEST(Operator, MoveOperator) {
   EXPECT_EQ(*ptr3, *pointer);
   EXPECT_TRUE(ptr1.get()== nullptr);
   EXPECT_TRUE(ptr3.get() == pointer);
+  SharedPtr<int> ptr4;
+  EXPECT_THROW(ptr4 = std::move(ptr4),
+               std::runtime_error);
 }
 
 TEST(Methods, Reset) {
